@@ -424,13 +424,18 @@
 1741801378 c:\users\tusha\onedrive\desktop\dsa project\2-d platformer\src\gameobject.cpp
 	<SFML/Graphics.hpp>
 
-1742480763 source:c:\users\tusha\desktop\dsa project\2-d platformer\main.cpp
+1744460723 source:c:\users\tusha\desktop\dsa project\2-d platformer\main.cpp
 	<SFML/Graphics.hpp>
 	"src/GameObject.cpp"
+	"Enemy.h"
 	<bits/stdc++.h>
 	<vector>
+	<cstdlib>
+	<ctime>
+	"EnemyWaveDSA.h"
+	"Enemy.h"
 
-1742216780 c:\users\tusha\desktop\dsa project\2-d platformer\src\gameobject.cpp
+1743923433 c:\users\tusha\desktop\dsa project\2-d platformer\src\gameobject.cpp
 	<SFML/Graphics.hpp>
 	<memory>
 	<iostream>
@@ -442,10 +447,132 @@
 1742207322 c:\users\tusha\desktop\dsa project\2-d platformer\include\obstacle.h
 	<SFML/Graphics.hpp>
 
-1741695752 c:\users\tusha\desktop\dsa project\2-d platformer\include\gameobject.h
-
-1742216780 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\gameobject.cpp
+1743918975 c:\users\tusha\desktop\dsa project\2-d platformer\include\gameobject.h
 	<SFML/Graphics.hpp>
 	<memory>
 	<iostream>
+
+1743923433 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\gameobject.cpp
+	<SFML/Graphics.hpp>
+	<memory>
+	<iostream>
+
+1741674367 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio.hpp
+	<SFML/System.hpp>
+	<SFML/Audio/InputSoundFile.hpp>
+	<SFML/Audio/Listener.hpp>
+	<SFML/Audio/Music.hpp>
+	<SFML/Audio/OutputSoundFile.hpp>
+	<SFML/Audio/Sound.hpp>
+	<SFML/Audio/SoundBuffer.hpp>
+	<SFML/Audio/SoundBufferRecorder.hpp>
+	<SFML/Audio/SoundFileFactory.hpp>
+	<SFML/Audio/SoundFileReader.hpp>
+	<SFML/Audio/SoundFileWriter.hpp>
+	<SFML/Audio/SoundRecorder.hpp>
+	<SFML/Audio/SoundSource.hpp>
+	<SFML/Audio/SoundStream.hpp>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\inputsoundfile.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+	<algorithm>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\export.hpp
+	<SFML/Config.hpp>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\listener.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/System/Vector3.hpp>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\music.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundStream.hpp>
+	<SFML/Audio/InputSoundFile.hpp>
+	<SFML/System/Mutex.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+	<vector>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundstream.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundSource.hpp>
+	<SFML/System/Thread.hpp>
+	<SFML/System/Time.hpp>
+	<SFML/System/Mutex.hpp>
+	<cstdlib>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundsource.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/AlResource.hpp>
+	<SFML/System/Vector3.hpp>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\alresource.hpp
+	<SFML/Audio/Export.hpp>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\outputsoundfile.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<string>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\sound.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundSource.hpp>
+	<SFML/System/Time.hpp>
+	<cstdlib>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundbuffer.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/AlResource.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+	<vector>
+	<set>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundbufferrecorder.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundBuffer.hpp>
+	<SFML/Audio/SoundRecorder.hpp>
+	<vector>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundrecorder.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/AlResource.hpp>
+	<SFML/System/Thread.hpp>
+	<SFML/System/Time.hpp>
+	<vector>
+	<string>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundfilefactory.hpp
+	<SFML/Audio/Export.hpp>
+	<string>
+	<vector>
+	<SFML/Audio/SoundFileFactory.inl>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundfilefactory.inl
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundfilereader.hpp
+	<SFML/Audio/Export.hpp>
+	<string>
+
+1741674368 c:\users\tusha\downloads\sfml-2.5.1-windows-gcc-7.3.0-mingw-64-bit\sfml-2.5.1\include\sfml\audio\soundfilewriter.hpp
+	<SFML/Audio/Export.hpp>
+	<string>
+
+1744392280 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\enemy.cpp
+	"Enemy.h"
+	<cmath>
+
+1744392280 c:\users\tusha\desktop\dsa project\2-d platformer\include\enemy.h
+	<SFML/Graphics.hpp>
+
+1744445052 c:\users\tusha\desktop\dsa project\2-d platformer\include\enemywavedsa.h
+	<vector>
+	<string>
+
+1744446342 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\enemywavedsa.cpp
+	"EnemyWaveDSA.h"
+	<queue>
 

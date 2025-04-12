@@ -47,6 +47,7 @@ public:
     // Getter Methods
     sf::Vector2f getPosition() const { return sprite.getPosition(); }
     sf::Vector2u getSize() const { return texture->getSize(); }
+    sf::Vector2f getScale() const { return sprite.getScale(); }  // ✅ Added this method
     sf::Sprite& getSprite() { return sprite; }
 
     // Set Texture Rect (for animations)
