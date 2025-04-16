@@ -11,8 +11,13 @@ public:
     sf::FloatRect getBounds() const;
     sf::Sprite& getSprite();
 
+    void takeHit();  // Declare this method
     void deactivate();
     bool isAlive() const;
+
+    bool canAttack();             // Check if cooldown passed
+    void resetAttackCooldown();  // Reset cooldown after attack
+
     bool isActive;
 
 private:
@@ -20,7 +25,12 @@ private:
     sf::Texture* textureRight;
     sf::Texture* textureLeft;
     float speed;
-    float lastX; // for direction tracking
+    float lastX; // For direction tracking
+    int hitCount = 0;
+
+    // Cooldown logic
+    sf::Clock attackClock;
+    sf::Time attackCooldown = sf::seconds(1.0f); // 1 second cooldown
 };
 
 #endif // ENEMY_H

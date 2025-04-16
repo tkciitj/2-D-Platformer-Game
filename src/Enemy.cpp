@@ -5,6 +5,7 @@ Enemy::Enemy(sf::Texture& textureR, sf::Texture& textureL, sf::Vector2f spawnPos
     : textureRight(&textureR), textureLeft(&textureL), speed(speed), isActive(true), lastX(spawnPos.x) {
     sprite.setTexture(textureR); // Default to right-facing
     sprite.setPosition(spawnPos);
+    attackClock.restart(); // Start cooldown timer
 }
 
 void Enemy::update(sf::Vector2f playerPos) {
@@ -45,4 +46,21 @@ void Enemy::deactivate() {
 
 bool Enemy::isAlive() const {
     return isActive;
+}
+
+// Cooldown check
+bool Enemy::canAttack() {
+    return attackClock.getElapsedTime() >= attackCooldown;
+}
+
+// Reset cooldown after attack
+void Enemy::resetAttackCooldown() {
+    attackClock.restart();
+}
+
+void Enemy::takeHit() {
+    hitCount++;
+    if (hitCount >= 3) {
+        deactivate();  // Set isActive = false
+    }
 }

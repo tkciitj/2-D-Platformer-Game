@@ -32,21 +32,51 @@ void spawnEnemiesForLevel(EnemyWaveNode* node, std::vector<Enemy>& enemies,
     }
 }
 
-int i = 0, score=0;
+int i = 0;
 int maxHealth = 5;
-int currentHealth = 5;
+int currentHealth = 20;
 int animationFrame = 0; // 0 = full, 4 = one heart left
 
+void resolveEnemyCollisions(std::vector<Enemy>& enemies) {
+    for (size_t i = 0; i < enemies.size(); ++i) {
+        for (size_t j = i + 1; j < enemies.size(); ++j) {
+            if (!enemies[i].isAlive() || !enemies[j].isAlive()) continue;
+
+            auto& spriteA = enemies[i].getSprite();
+            auto& spriteB = enemies[j].getSprite();
+
+            if (spriteA.getGlobalBounds().intersects(spriteB.getGlobalBounds())) {
+                // Push both enemies away from each other
+                sf::Vector2f posA = spriteA.getPosition();
+                sf::Vector2f posB = spriteB.getPosition();
+                sf::Vector2f delta = posB - posA;
+
+                float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+                if (distance == 0) distance = 1.0f;  // Prevent divide by zero
+
+                sf::Vector2f pushDir = delta / distance;
+                float pushAmount = 0.7f;  // tweak this value based on how aggressive the separation should be
+
+                spriteA.move(-pushDir * pushAmount);
+                spriteB.move(pushDir * pushAmount);
+            }
+        }
+    }
+}
 
 void updateHealthBar(sf::Sprite& sprite, int currentHealth, sf::Texture& texture) {
-    int totalFrames = 5;
+    const int totalFrames = 5;
+    const int maxHealth = 20;
     int frameHeight = texture.getSize().y / totalFrames;
     int frameWidth = texture.getSize().x;
 
-    int row = std::max(0, std::min(5 - currentHealth, 4)); // Convert health to row index
+    // Map 0–20 HP to frame 0–4
+    int healthSegment = maxHealth / totalFrames;
+    int row = std::min((maxHealth - currentHealth) / healthSegment, totalFrames - 1);
+
+    sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, row * frameHeight, frameWidth, frameHeight));
 }
-
 
 void loadNextScene(std::vector<GameObject>& obstacles, sf::RenderWindow& app) {
     srand(time(0)); // random number generator
@@ -185,6 +215,7 @@ int frameWidth = healthBarTexture.getSize().x;
 // Position at top-right
 healthBarSprite.setScale(0.3f, 0.3f);
 healthBarSprite.setPosition(app.getSize().x - frameWidth +610, 30);
+updateHealthBar(healthBarSprite, currentHealth, healthBarTexture); // FIXES IT
 
 
     // Create a view (camera)
@@ -212,6 +243,15 @@ levelClearedText.setFillColor(sf::Color::Red);
 levelClearedText.setPosition(0.f, 200.f); // center-top position
 bool showLevelCleared = false;
 sf::Clock levelClearedTimer;
+
+int score = 0;
+sf::Text scoreText;
+scoreText.setFont(font);
+scoreText.setCharacterSize(50);
+scoreText.setFillColor(sf::Color::Black);
+scoreText.setPosition(40, 20);
+scoreText.setString("Score:0");
+
 
     // Player animation properties
     int frameIndex = 0;
@@ -361,7 +401,8 @@ sf::Clock portalCooldownClock;
         coinSprite.setTextureRect(sf::IntRect(coinFrameWidth * coinFrameIndex, 0, coinFrameWidth, coinTexture.getSize().y));
 
         // medkit animation logic
-        if (mediAnimationClock.getElapsedTime() >= mediFrameDuration) {
+
+        if(mediAnimationClock.getElapsedTime() >=mediFrameDuration){
             mediFrameIndex = (mediFrameIndex + 1) % totalmediFrames;
             mediAnimationClock.restart();
         }
@@ -448,19 +489,46 @@ sf::Clock portalCooldownClock;
             enemy.update(sf::Vector2f(playerSprite.getPosition().x, playerSprite.getPosition().y));
         }
 
-        for (auto& enemy : enemies) {
-            if (enemy.isActive && playerSprite.getGlobalBounds().intersects(enemy.getBounds())) {
-                currentHealth-= 1; // Or based on time/damage rate
-                updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
-                // You can also add a cooldown so player doesn't lose HP too quickly
-                std::cout << "Player hit! Health: " << currentHealth << std::endl;
+        bool attackedEnemy = false;  // Flag to ensure only one enemy is hit per frame
 
-                if (currentHealth <= 0) {
-                    std::cout << "Game Over!\n";
-                    // Handle game over state
-                }
+for (auto& enemy : enemies) {
+    if (!enemy.isAlive()) continue;
+
+    if (playerSprite.getGlobalBounds().intersects(enemy.getBounds())) {
+
+        // 1. Dodge cancels enemy attack
+        if (Dodge) continue;
+
+        // 2. Attack logic – only damage ONE enemy
+        if (Attack && !attackedEnemy) {
+            enemy.takeHit();
+            attackedEnemy = true;  // Prevent damaging others this frame
+
+            if (!enemy.isAlive()) {
+                score += 10;
+                scoreText.setString("Score: " + std::to_string(score));
+                std::cout << "Enemy defeated! Score: " << score << std::endl;
+            }
+
+            continue;  // Skip rest (no enemy attack if player is attacking)
+        }
+
+        // 3. Enemy attacks if not being dodged or attacked
+        if (enemy.canAttack()) {
+            currentHealth = std::max(0, currentHealth - 1);
+            updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
+            enemy.resetAttackCooldown();
+
+            std::cout << "Player hit! Health: " << currentHealth << std::endl;
+
+            if (currentHealth == 0) {
+                std::cout << "Game Over!\n";
+                // Handle game over logic
             }
         }
+    }
+}
+
 
         if (!portalTriggered && portalSprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds()) && sceneCounter>=5) {
     if (!currentLevelNode->children.empty()) {
@@ -484,6 +552,8 @@ sf::Clock portalCooldownClock;
         portalCooldownClock.restart();
 
         sceneCounter=0;
+        currentHealth=20;
+        updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
     }
 }
 
@@ -503,7 +573,8 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
         // medkit collection check
         if (!ismediCollected && playerSprite.getGlobalBounds().intersects(mediSprite.getGlobalBounds())) {
             ismediCollected = true; // Hide coin once collected
-            cout << "HEALTH IS "<< ++currentHealth<<"\n";
+            currentHealth+=4;
+            cout << "HEALTH IS "<< currentHealth<<"\n";
             updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
         }
 
@@ -517,6 +588,8 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
             loadNextScene(obstacles, app);
             nextScene = false;  // Prevent continuous reloading
         }
+
+        resolveEnemyCollisions(enemies);
 
         // Render everything
         app.clear();
@@ -581,6 +654,7 @@ if (showLevelCleared) {
 }
     app.setView(app.getDefaultView());
     app.draw(healthBarSprite);
+    app.draw(scoreText);
         app.display();
     }
 

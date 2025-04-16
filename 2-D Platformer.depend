@@ -424,7 +424,7 @@
 1741801378 c:\users\tusha\onedrive\desktop\dsa project\2-d platformer\src\gameobject.cpp
 	<SFML/Graphics.hpp>
 
-1744460723 source:c:\users\tusha\desktop\dsa project\2-d platformer\main.cpp
+1744824917 source:c:\users\tusha\desktop\dsa project\2-d platformer\main.cpp
 	<SFML/Graphics.hpp>
 	"src/GameObject.cpp"
 	"Enemy.h"
@@ -561,11 +561,11 @@
 	<SFML/Audio/Export.hpp>
 	<string>
 
-1744392280 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\enemy.cpp
+1744811249 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\enemy.cpp
 	"Enemy.h"
 	<cmath>
 
-1744392280 c:\users\tusha\desktop\dsa project\2-d platformer\include\enemy.h
+1744811249 c:\users\tusha\desktop\dsa project\2-d platformer\include\enemy.h
 	<SFML/Graphics.hpp>
 
 1744445052 c:\users\tusha\desktop\dsa project\2-d platformer\include\enemywavedsa.h
