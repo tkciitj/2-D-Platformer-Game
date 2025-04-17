@@ -7,6 +7,8 @@
 #include <ctime>    // For seeding random
 #include "EnemyWaveDSA.h"
 #include "Enemy.h" // Assuming you have an Enemy class
+#include <SFML/Audio.hpp>
+
 
 using namespace std;
 
@@ -33,9 +35,11 @@ void spawnEnemiesForLevel(EnemyWaveNode* node, std::vector<Enemy>& enemies,
 }
 
 int i = 0;
-int maxHealth = 5;
-int currentHealth = 20;
+int maxHealth = 40;
+int currentHealth = 40;
 int animationFrame = 0; // 0 = full, 4 = one heart left
+bool isGameOver=false;
+bool isGameCompleted=false;
 
 void resolveEnemyCollisions(std::vector<Enemy>& enemies) {
     for (size_t i = 0; i < enemies.size(); ++i) {
@@ -66,11 +70,11 @@ void resolveEnemyCollisions(std::vector<Enemy>& enemies) {
 
 void updateHealthBar(sf::Sprite& sprite, int currentHealth, sf::Texture& texture) {
     const int totalFrames = 5;
-    const int maxHealth = 20;
+    const int maxHealth = 40;
     int frameHeight = texture.getSize().y / totalFrames;
     int frameWidth = texture.getSize().x;
 
-    // Map 0–20 HP to frame 0–4
+    // Map diff HP to frame 0–4
     int healthSegment = maxHealth / totalFrames;
     int row = std::min((maxHealth - currentHealth) / healthSegment, totalFrames - 1);
 
@@ -125,8 +129,30 @@ int main()
 {
     sf::RenderWindow app(sf::VideoMode::getDesktopMode(), "Side Scroller Game", sf::Style::Fullscreen);
 
+    sf::Texture startTexture;
+startTexture.loadFromFile("assets/startscreen.png");
+
+sf::Sprite startSprite;
+startSprite.setTexture(startTexture);
+
+// Scale to fullscreen
+sf::Vector2u windowSize = app.getSize();
+sf::Vector2u textureSize = startTexture.getSize();
+
+float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
+float scaleY = static_cast<float>(windowSize.y) / textureSize.y;
+startSprite.setScale(scaleX, scaleY);
+
+// Show for 8 seconds
+sf::Clock startClock;
+while (startClock.getElapsedTime().asSeconds() < 8.0f) {
+    app.clear();
+    app.draw(startSprite);
+    app.display();
+}
+
     // Background (Make it fit the window)
-    GameObject bg("assets/bg4.png");
+    GameObject bg("assets/bg_1.png");
     float bgScaleX = static_cast<float>(app.getSize().x) / bg.getSize().x;
     float bgScaleY = static_cast<float>(app.getSize().y) / bg.getSize().y;
     bg.setScale(bgScaleX, bgScaleY);
@@ -217,6 +243,67 @@ healthBarSprite.setScale(0.3f, 0.3f);
 healthBarSprite.setPosition(app.getSize().x - frameWidth +610, 30);
 updateHealthBar(healthBarSprite, currentHealth, healthBarTexture); // FIXES IT
 
+// Game Over screen
+sf::Texture gameOverTexture;
+gameOverTexture.loadFromFile("assets/gameover.jpg");
+
+sf::Sprite gameOverSprite;
+gameOverSprite.setTexture(gameOverTexture);
+gameOverSprite.setScale(
+    (float)app.getSize().x / gameOverTexture.getSize().x,
+    (float)app.getSize().y / gameOverTexture.getSize().y
+);
+
+// Buttons (Restart and Quit)
+sf::RectangleShape restartButton(sf::Vector2f(250, 120));
+restartButton.setFillColor(sf::Color::Yellow);
+restartButton.setPosition(app.getSize().x / 2 - 346, app.getSize().y / 2 + 80);
+
+sf::RectangleShape quitButton(sf::Vector2f(220, 120));
+quitButton.setFillColor(sf::Color::Yellow);
+quitButton.setPosition(app.getSize().x / 2 + 64, app.getSize().y / 2 + 80);
+
+sf::Font gameOverFont;
+gameOverFont.loadFromFile("fonts/RubikMonoOne-Regular.ttf");
+
+sf::Text restartText("Restart", gameOverFont, 35);
+restartText.setFillColor(sf::Color::Black);
+restartText.setPosition(restartButton.getPosition().x + 20, restartButton.getPosition().y + 33);
+
+sf::Text quitText("Quit", gameOverFont, 35);
+quitText.setFillColor(sf::Color::Black);
+quitText.setPosition(quitButton.getPosition().x + 55, quitButton.getPosition().y + 33);
+
+sf::SoundBuffer attackBuffer, damageBuffer, coinBuffer, gameOverBuffer, jumpBuffer, completeBuffer;
+sf::Sound attackSound, damageSound, coinSound, gameOverSound, jumpSound, completeSound;
+
+attackBuffer.loadFromFile("sounds/sword-hit.ogg");
+damageBuffer.loadFromFile("sounds/damage.mp3");
+coinBuffer.loadFromFile("sounds/coin_collect.ogg");
+//medkitBuffer.loadFromFile("sounds/medkit.mp3");
+gameOverBuffer.loadFromFile("sounds/game-over.ogg");
+jumpBuffer.loadFromFile("sounds/jump.ogg");
+//bgBuffer.loadFromFile("sounds/game-bgm.mp3");
+completeBuffer.loadFromFile("sounds/game-done.ogg");
+
+attackSound.setBuffer(attackBuffer);
+damageSound.setBuffer(damageBuffer);
+coinSound.setBuffer(coinBuffer);
+//medkitSound.setBuffer(medkitBuffer);
+gameOverSound.setBuffer(gameOverBuffer);
+jumpSound.setBuffer(jumpBuffer);
+//bgSound.setBuffer(bgBuffer);
+completeSound.setBuffer(completeBuffer);
+jumpSound.setVolume(10);
+
+
+sf::Music bgMusic;
+if (bgMusic.openFromFile("sounds/game-bgm.ogg")) {
+    bgMusic.setLoop(true);
+    bgMusic.setVolume(50); // optional
+    bgMusic.play();
+}
+
 
     // Create a view (camera)
     sf::View cameraView(sf::FloatRect(0, 0, 1920, 1080));
@@ -234,6 +321,14 @@ updateHealthBar(healthBarSprite, currentHealth, healthBarTexture); // FIXES IT
     warningText.setFillColor(sf::Color::Red);
     //warningText.setStyle(sf::Text::Bold);
     warningText.setPosition(playerSprite.getPosition().x - 850, 50); // Adjust as needed
+
+    sf::Text completionText;
+    completionText.setFont(font);
+    completionText.setString("CONGRATS!! THATS IT FOR NOW");
+    completionText.setCharacterSize(60);
+    completionText.setFillColor(sf::Color::Red);
+    //warningText.setStyle(sf::Text::Bold);
+    completionText.setPosition(playerSprite.getPosition().x - 850, 50); // Adjust as needed
 
     sf::Text levelClearedText;
 levelClearedText.setFont(font);
@@ -297,15 +392,16 @@ scoreText.setString("Score:0");
     }
 
     enemyRoot = buildEnemyWaveTree(5); // 5 levels
-currentLevelNode = enemyRoot;
-spawnEnemiesForLevel(currentLevelNode, enemies, enemyTextureR, enemyTextureL, spawnPositions);
+    EnemyWaveNode* rootLevelNode = enemyRoot;
+    currentLevelNode = enemyRoot;
+    spawnEnemiesForLevel(currentLevelNode, enemies, enemyTextureR, enemyTextureL, spawnPositions);
 
 LevelNode* level1 = new LevelNode();
-level1->bgImagePath = "assets/bg4.png";
+level1->bgImagePath = "assets/bg_1.png";
 level1->enemyCount = 3;
 
 LevelNode* level2 = new LevelNode();
-level2->bgImagePath = "assets/bg2.gif";
+level2->bgImagePath = "assets/bg_2.png";
 
 
     // Movement and gravity variables
@@ -320,6 +416,14 @@ level2->bgImagePath = "assets/bg2.gif";
     float VelocityY = 0.0f;
     bool portalTriggered = false;
 sf::Clock portalCooldownClock;
+sf::Clock playerAttackClock;
+sf::Time attackCooldown = sf::milliseconds(300); // 0.5s cooldown
+bool Attack = false;
+sf::Clock attackSpriteClock;
+sf::Time attackSpriteDuration = sf::milliseconds(200);  // 0.5 sec
+bool isAttacking = false;
+
+
 
 
     // main game loop
@@ -338,25 +442,28 @@ sf::Clock portalCooldownClock;
         bool Dodge=false;
         bool showWarning = false;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !isGameOver) {
             playerSprite.move(-3.0f, 0.0f);
             playerSprite.setTexture(playerTextureA);
             isMoving = true;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !isGameOver) {
             playerSprite.move(+3.0f, 0.0f);
             playerSprite.setTexture(playerTextureD);
             isMoving = true;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !isJumping && !bottomCollision) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !isJumping && !bottomCollision && !isGameOver) {
             VelocityY = -JumpStrength;
             isJumping = true;
+            jumpSound.play();
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            //attack the enemy
-            Attack=true;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && playerAttackClock.getElapsedTime() > attackCooldown && !isGameOver) {
+            Attack = true;
+            isAttacking=true;
+            playerAttackClock.restart();
+            attackSpriteClock.restart();       // for visibility duration
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::E) && !isGameOver){
             //dodge the enemy
             Dodge=true;
         }
@@ -433,11 +540,20 @@ sf::Clock portalCooldownClock;
             playerSprite.setPosition(0, playerSprite.getPosition().y);
             showWarning = true;
         }
-        if (playerSprite.getPosition().x > app.getSize().x){
-            playerSprite.setPosition(0, playerSprite.getPosition().y);
-            nextScene=true;
-            sceneCounter++;
-        }
+        if (playerSprite.getPosition().x > app.getSize().x) {
+    // Prevent right boundary movement if it's the last level
+    if (currentLevelNode->children.empty()) {
+        // Last level – clamp to screen boundary
+        isGameCompleted=true;
+        playerSprite.setPosition(app.getSize().x - playerSprite.getGlobalBounds().width + 167, playerSprite.getPosition().y);
+    } else {
+        // Not last level – move to next scene
+        playerSprite.setPosition(0, playerSprite.getPosition().y);
+        nextScene = true;
+        sceneCounter++;
+    }
+}
+
 
         // Collision with obstacle
         sf::FloatRect playerBounds = playerSprite.getGlobalBounds();
@@ -486,49 +602,58 @@ sf::Clock portalCooldownClock;
         }
 
         for (auto& enemy : enemies) {
+            if(enemy.isAlive() && !isGameOver){
             enemy.update(sf::Vector2f(playerSprite.getPosition().x, playerSprite.getPosition().y));
+            }
         }
 
-        bool attackedEnemy = false;  // Flag to ensure only one enemy is hit per frame
+bool attackedEnemy = false;
+std::vector<Enemy*> collidingEnemies;
 
 for (auto& enemy : enemies) {
     if (!enemy.isAlive()) continue;
 
     if (playerSprite.getGlobalBounds().intersects(enemy.getBounds())) {
-
-        // 1. Dodge cancels enemy attack
         if (Dodge) continue;
 
-        // 2. Attack logic – only damage ONE enemy
-        if (Attack && !attackedEnemy) {
-            enemy.takeHit();
-            attackedEnemy = true;  // Prevent damaging others this frame
-
-            if (!enemy.isAlive()) {
-                score += 10;
-                scoreText.setString("Score: " + std::to_string(score));
-                std::cout << "Enemy defeated! Score: " << score << std::endl;
-            }
-
-            continue;  // Skip rest (no enemy attack if player is attacking)
-        }
-
-        // 3. Enemy attacks if not being dodged or attacked
-        if (enemy.canAttack()) {
-            currentHealth = std::max(0, currentHealth - 1);
-            updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
-            enemy.resetAttackCooldown();
-
-            std::cout << "Player hit! Health: " << currentHealth << std::endl;
-
-            if (currentHealth == 0) {
-                std::cout << "Game Over!\n";
-                // Handle game over logic
-            }
-        }
+        // Store all colliding enemies first
+        collidingEnemies.push_back(&enemy);
     }
 }
 
+// Attack only ONE enemy from the colliding list
+if (Attack && !attackedEnemy && !collidingEnemies.empty() && !isGameOver) {
+    Enemy* target = collidingEnemies[0];  // Pick the first one arbitrarily (or use random index if you want)
+
+    target->takeHit();
+    attackedEnemy = true;
+    attackSound.play();
+
+    if (!target->isAlive()) {
+        score += 10;
+        scoreText.setString("Score: " + std::to_string(score));
+        std::cout << "Enemy defeated! Score: " << score << std::endl;
+    }
+}
+
+// Handle attacks from remaining enemies (if not dodged)
+for (auto* enemyPtr : collidingEnemies) {
+    if (!Attack && enemyPtr->canAttack() && !isGameOver) {
+        currentHealth = std::max(0, currentHealth - 1);
+        updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
+        enemyPtr->resetAttackCooldown();
+
+        std::cout << "Player hit! Health: " << currentHealth << std::endl;
+        damageSound.play();
+
+        if (currentHealth == 0) {
+            std::cout << "Game Over!\n";
+            // Game over logic
+            isGameOver=true;
+            gameOverSound.play();
+        }
+    }
+}
 
         if (!portalTriggered && portalSprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds()) && sceneCounter>=5) {
     if (!currentLevelNode->children.empty()) {
@@ -552,7 +677,7 @@ for (auto& enemy : enemies) {
         portalCooldownClock.restart();
 
         sceneCounter=0;
-        currentHealth=20;
+        currentHealth=40;
         updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
     }
 }
@@ -567,13 +692,16 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
          // coin collection check
         if (!isCoinCollected && playerSprite.getGlobalBounds().intersects(coinSprite.getGlobalBounds())) {
             isCoinCollected = true; // Hide coin once collected
+            coinSound.play();
             cout << "SCORE IS "<< ++score<<"\n";
+            scoreText.setString("Score: " + std::to_string(score));
         }
 
         // medkit collection check
         if (!ismediCollected && playerSprite.getGlobalBounds().intersects(mediSprite.getGlobalBounds())) {
             ismediCollected = true; // Hide coin once collected
-            currentHealth+=4;
+            coinSound.play();
+            currentHealth+=8;
             cout << "HEALTH IS "<< currentHealth<<"\n";
             updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
         }
@@ -612,15 +740,14 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
             floor.draw(app);
         }
 
-        if(!Attack && !Dodge){
-            app.draw(playerSprite);
-        }
-        if(Attack && !Dodge){
-            app.draw(attackSprite);
-        }
-        if(Dodge && !Attack){
-            app.draw(dodgeSprite);
-        }
+        if (isAttacking && attackSpriteClock.getElapsedTime() < attackSpriteDuration) {
+    app.draw(attackSprite);
+} else if (Dodge) {
+    app.draw(dodgeSprite);
+} else {
+    app.draw(playerSprite);
+}
+
         if(Attack && Dodge){
             app.draw(playerSprite);
         }
@@ -628,8 +755,10 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
             obstacle.draw(app);
         }
         for (auto& enemy : enemies) {
+            if(enemy.isAlive()){
             enemy.getSprite().setScale(0.2f, 0.2f); // Adjust these values as needed
             app.draw(enemy.getSprite());
+            }
         }
         if(!isCoinCollected){
             app.draw(coinSprite);
@@ -637,12 +766,15 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
         if(!ismediCollected){
             app.draw(mediSprite);
         }
-        if(sceneCounter>=5){
+        if(sceneCounter>=5 && !currentLevelNode->children.empty()){
             app.draw(portalSprite);
         }
 
         if (showWarning) {
             app.draw(warningText);
+        }
+        if(isGameCompleted){
+            app.draw(completionText);
         }
         // Show "Level Cleared!!" for 2 seconds
 if (showLevelCleared) {
@@ -652,9 +784,72 @@ if (showLevelCleared) {
         showLevelCleared = false;
     }
 }
+// Reset attack visibility after duration
+if (attackSpriteClock.getElapsedTime() >= attackSpriteDuration) {
+    isAttacking = false;
+}
+
     app.setView(app.getDefaultView());
     app.draw(healthBarSprite);
     app.draw(scoreText);
+
+    if (isGameOver) {
+    app.clear();
+
+    // Draw Game Over screen and buttons
+    app.draw(gameOverSprite);
+    app.draw(restartButton);
+    app.draw(quitButton);
+    app.draw(restartText);
+    app.draw(quitText);
+    app.display();
+
+    // Poll for button click
+    while (app.pollEvent(event)) {
+        if (event.type == sf::Event::Closed)
+            app.close();
+
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+            sf::Vector2f mousePos = app.mapPixelToCoords(sf::Mouse::getPosition(app));
+
+            if (restartButton.getGlobalBounds().contains(mousePos)) {
+    // Reset everything
+    isGameOver = false;
+    currentLevelNode = rootLevelNode; // Reset to level 1
+    currentHealth = 40;
+    updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
+    score = 0;
+    scoreText.setString("Score: 0");
+
+    // Reset player position
+    playerSprite.setPosition(300, 670);
+
+    // Update background
+    bg = GameObject(currentLevelNode->bgImagePath);
+    float bgScaleX = static_cast<float>(app.getSize().x) / bg.getSize().x;
+    float bgScaleY = static_cast<float>(app.getSize().y) / bg.getSize().y;
+    bg.setScale(bgScaleX, bgScaleY);
+    bg.setPosition(0, 0);
+
+    // Clear and respawn enemies
+    enemies.clear();
+    for (int i = 0; i < 3; ++i) {
+        int index = dist(gen);
+        enemies.emplace_back(enemyTextureR, enemyTextureL, spawnPositions[index]);
+    }
+
+    break;
+}
+
+            if (quitButton.getGlobalBounds().contains(mousePos)) {
+                app.close();
+            }
+        }
+    }
+
+    continue; // Skip game logic when game over
+}
+
         app.display();
     }
 

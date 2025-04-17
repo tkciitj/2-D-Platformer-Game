@@ -424,7 +424,7 @@
 1741801378 c:\users\tusha\onedrive\desktop\dsa project\2-d platformer\src\gameobject.cpp
 	<SFML/Graphics.hpp>
 
-1744824917 source:c:\users\tusha\desktop\dsa project\2-d platformer\main.cpp
+1744892127 source:c:\users\tusha\desktop\dsa project\2-d platformer\main.cpp
 	<SFML/Graphics.hpp>
 	"src/GameObject.cpp"
 	"Enemy.h"
@@ -434,6 +434,7 @@
 	<ctime>
 	"EnemyWaveDSA.h"
 	"Enemy.h"
+	<SFML/Audio.hpp>
 
 1743923433 c:\users\tusha\desktop\dsa project\2-d platformer\src\gameobject.cpp
 	<SFML/Graphics.hpp>
@@ -572,7 +573,7 @@
 	<vector>
 	<string>
 
-1744446342 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\enemywavedsa.cpp
+1744835193 source:c:\users\tusha\desktop\dsa project\2-d platformer\src\enemywavedsa.cpp
 	"EnemyWaveDSA.h"
 	<queue>
 

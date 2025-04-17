@@ -3,13 +3,13 @@
 
 EnemyWaveNode* buildEnemyWaveTree(int maxLevels) {
     // Initialize the root level with 3 enemies and an initial background
-    EnemyWaveNode* root = new EnemyWaveNode(1, 3, "assets/bg1.png"); // Level 1
+    EnemyWaveNode* root = new EnemyWaveNode(1, 3, "assets/bg_1.png"); // Level 1
     std::queue<EnemyWaveNode*> q;
     q.push(root);
 
     // List of background images for each level (loop or cycle through them)
     std::vector<std::string> bgPaths = {
-        "assets/bg1.jpg", "assets/bg2.gif", "assets/bg3.png", "assets/bg4.png"
+        "assets/bg_1.png", "assets/bg_2.png", "assets/bg_3.jpg", "assets/bg_4.jpg"
     };
 
     while (!q.empty()) {
