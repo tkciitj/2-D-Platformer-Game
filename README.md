@@ -40,8 +40,8 @@ This project is a **classic side-scrolling adventure game** built using **SFML (
 
 - **Enemies:**  
   - Enemies play a critical role in increasing difficulty and maintaining excitement.  
-  - **No of Enemies increses at higher level :** Chase the player once spotted and use basic attacks.  
-  -
+  - **No of Enemies increses at higher level :** Chase the player once spotted and use basic attacks.
+    
 - **Power-ups:**  
   - Power-ups are placed throughout the game and provide temporary or permanent boosts. These can be hidden, dropped by enemies, or found in treasure chests.  
   - **Health Boost:** Restores part or all of the player’s health bar. Essential after difficult battles or traps.  
