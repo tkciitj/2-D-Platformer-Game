@@ -31,6 +31,7 @@ This project is a **classic side-scrolling adventure game** built using **SFML (
 
   - **Combat:**  
     - **Attack:** `Spacebar`
+    - **Dodge:** `E`
     - Players can perform melee attacks using a basic weapon (e.g., sword ) and can dodge enemies attack through shield . Later versions may introduce ranged attacks or magic abilities. The combat system includes hit detection, attack cooldowns, and enemy reactions such as knockback or damage animation and if the player hit by enemies it cost him to lost his health bar .  
 
   - **Game Controls:**  
