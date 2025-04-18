@@ -417,10 +417,10 @@ level2->bgImagePath = "assets/bg_2.png";
     bool portalTriggered = false;
 sf::Clock portalCooldownClock;
 sf::Clock playerAttackClock;
-sf::Time attackCooldown = sf::milliseconds(300); // 0.5s cooldown
+sf::Time attackCooldown = sf::milliseconds(300); // 0.3s cooldown
 bool Attack = false;
 sf::Clock attackSpriteClock;
-sf::Time attackSpriteDuration = sf::milliseconds(200);  // 0.5 sec
+sf::Time attackSpriteDuration = sf::milliseconds(200);  // 0.2 sec
 bool isAttacking = false;
 
 
@@ -658,6 +658,8 @@ for (auto* enemyPtr : collidingEnemies) {
         if (!portalTriggered && portalSprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds()) && sceneCounter>=5) {
     if (!currentLevelNode->children.empty()) {
         showLevelCleared = true;
+        ismediCollected=false;
+        isCoinCollected=false;
         levelClearedTimer.restart();
 
         currentLevelNode = currentLevelNode->children[0];
@@ -714,6 +716,8 @@ if (portalTriggered && portalCooldownClock.getElapsedTime().asSeconds() > 1.f) {
 
         if (nextScene) {
             loadNextScene(obstacles, app);
+            //ismediCollected=false;
+            isCoinCollected=false;
             nextScene = false;  // Prevent continuous reloading
         }
 
@@ -814,7 +818,12 @@ if (attackSpriteClock.getElapsedTime() >= attackSpriteDuration) {
 
             if (restartButton.getGlobalBounds().contains(mousePos)) {
     // Reset everything
+    ismediCollected=false;
+    isCoinCollected=false;
+    gameOverSound.pause();
+    //completeSound.pause();
     isGameOver = false;
+    isGameCompleted=false;
     currentLevelNode = rootLevelNode; // Reset to level 1
     currentHealth = 40;
     updateHealthBar(healthBarSprite, currentHealth, healthBarTexture);
