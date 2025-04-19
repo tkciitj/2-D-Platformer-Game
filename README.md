@@ -1,3 +1,5 @@
+# PixelRush 2D
+
 # 2-D Side-Scroller Adventure Game (SFML - C++)
 
 ## Overview  
