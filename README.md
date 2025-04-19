@@ -47,4 +47,8 @@ This project is a **classic side-scrolling adventure game** built using **SFML (
 - **Power-ups:**  
   - Power-ups are placed throughout the game and provide temporary or permanent boosts. These can be hidden, dropped by enemies, or found in treasure chests.  
   - **Health Boost:** Restores part or all of the player’s health bar. Essential after difficult battles or traps.  
-  
+
+## Gameplay 
+![WhatsApp Image 2025-04-18 at 23 02 25_99c79bc0](https://github.com/user-attachments/assets/4f0edc68-d50b-4d3c-bef0-68b07ed834a1)
+GDrive Link: https://drive.google.com/file/d/1cvjofMD4jZar7-9u8AWBxrkTVob6ebv7/view?usp=sharing
+
